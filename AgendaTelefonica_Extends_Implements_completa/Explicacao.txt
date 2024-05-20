@@ -1,0 +1,96 @@
+import java.time.LocalDate;  // Importa a classe LocalDate para lidar com datas.
+import java.time.format.DateTimeParseException;  // Importa a classe DateTimeParseException para lidar com exceções de formato de data.
+import java.util.ArrayList;  // Importa a classe ArrayList para usar listas.
+import java.util.List;  // Importa a classe List para usar listas.
+import java.util.Scanner;  // Importa a classe Scanner para entrada do usuário.
+
+public class AgendaTelefonica implements OperacoesAgenda {  // Define a classe AgendaTelefonica que implementa a interface OperacoesAgenda.
+    
+    private List<Contato> contatos;  // Declara uma lista privada chamada contatos que armazenará objetos do tipo Contato.
+    private Scanner scanner;  // Declara um objeto privado do tipo Scanner para receber entrada do usuário.
+
+    public AgendaTelefonica(){  // Define o construtor da classe AgendaTelefonica.
+        contatos = new ArrayList<Contato>();  // Inicializa a lista contatos como uma nova instância de ArrayList.
+        scanner = new Scanner(System.in);  // Inicializa o objeto scanner como uma nova instância de Scanner para entrada do sistema.
+    }
+
+    @Override  // Indica que o método está substituindo um método da interface pai.
+    public void adicionar() {  // Define o método para adicionar contatos.
+        System.out.println("Escolha o tipo de contato: ");  // Exibe as opções para escolher o tipo de contato.
+        System.out.println("1 - Contato");
+        System.out.println("2 - Contato Profissional");
+        System.out.println("3 - Contato Pessoal");
+        int tipoContato = scanner.nextInt();  // Lê o tipo de contato escolhido pelo usuário.
+        scanner.nextLine();  // Limpa o buffer do scanner.
+
+        System.out.print("Nome: ");  // Solicita ao usuário o nome do contato.
+        String nome = scanner.nextLine();  // Lê o nome do contato inserido pelo usuário.
+        System.out.print("Telefone: ");  // Solicita ao usuário o telefone do contato.
+        int telefone = scanner.nextInt();  // Lê o telefone do contato inserido pelo usuário.
+        scanner.nextLine();  // Limpa o buffer do scanner.
+
+        if (tipoContato == 1) {  // Verifica se o tipo de contato é igual a 1.
+            Contato contato = new Contato(nome, telefone);  // Cria um novo objeto Contato com o nome e telefone fornecidos.
+            contatos.add(contato);  // Adiciona o novo contato à lista de contatos.
+        } else if (tipoContato == 2) {  // Se o tipo de contato não for igual a 1, mas for igual a 2.
+            System.out.print("Email: ");  // Solicita ao usuário o email do contato profissional.
+            String email = scanner.nextLine();  // Lê o email inserido pelo usuário.
+            ContatoProfissional contatoProfissional = new ContatoProfissional(nome, telefone, email);  // Cria um novo objeto ContatoProfissional com o nome, telefone e email fornecidos.
+            contatos.add(contatoProfissional);  // Adiciona o novo contato profissional à lista de contatos.
+        } else if (tipoContato == 3) {  // Se o tipo de contato não for igual a 1 ou 2, mas for igual a 3.
+            String dataNascimentoStr = "";  // Inicializa uma string vazia para armazenar a data de nascimento como uma string.
+            LocalDate dataNascimento = null;  // Inicializa um objeto LocalDate como nulo para armazenar a data de nascimento.
+            boolean dataValida = false;  // Inicializa uma variável booleana para verificar se a data é válida.
+
+            while (!dataValida) {  // Inicia um loop enquanto a data não for válida.
+                try {  // Tenta executar o seguinte bloco de código.
+                    System.out.print("Data de Nascimento (YYYY-MM-DD): ");  // Solicita ao usuário a data de nascimento.
+                    dataNascimentoStr = scanner.nextLine();  // Lê a entrada do usuário como uma string.
+                    dataNascimento = LocalDate.parse(dataNascimentoStr);  // Converte a string de data em um objeto LocalDate.
+                    dataValida = true;  // Define a variável dataValida como verdadeira se a conversão for bem-sucedida.
+                } catch (DateTimeParseException e) {  // Captura uma exceção se ocorrer um erro durante a conversão da data.
+                    System.out.println("Formato de data inválido. Por favor, insira a data no formato YYYY-MM-DD.");  // Informa ao usuário que o formato da data é inválido.
+                }
+            }
+
+            ContatoPessoal contatoPessoal = new ContatoPessoal(nome, telefone, dataNascimentoStr);  // Cria um novo objeto ContatoPessoal com o nome, telefone e data de nascimento fornecidos como strings.
+            contatos.add(contatoPessoal);  // Adiciona o novo contato pessoal à lista de contatos.
+        }
+    }
+
+    @Override  // Indica que o método está substituindo um método da interface pai.
+    public void buscarContatos() {  // Define o método para buscar contatos.
+        System.out.print("Nome do contato a ser buscado: ");  // Solicita ao usuário o nome do contato a ser buscado.
+        String nomeBuscar = scanner.nextLine();  // Lê o nome do contato inserido pelo usuário.
+        Contato contato = null;  // Inicializa uma variável de contato como nula.
+        for (Contato c : contatos) {  // Itera sobre a lista de contatos.
+            if (c.getNome().equals(nomeBuscar)) {  // Verifica se o nome do contato atual é igual ao nome buscado.
+                contato = c;  // Se encontrado, atribui o contato atual à variável 'contato' e quebra o loop.
+                break;
+            }
+        }
+        if (contato != null) {  // Verifica se um contato foi encontrado.
+            System.out.println(contato);  // Se sim, imprime as informações do contato encontrado.
+        } else {  // Se nenhum contato foi encontrado.
+            System.out.println("Contato não encontrado.");  // Imprime uma mensagem informando que o contato não foi encontrado.
+        }
+    }
+
+    @Override  // Indica que o método está substituindo um método da interface pai.
+    public void listar() {  // Define o método para listar contatos.
+        if (contatos.isEmpty()) {  // Verifica se a lista de contatos está vazia.
+            System.out.println("Nenhum contato encontrado.");  // Se estiver vazia, imprime uma mensagem informando que nenhum contato foi encontrado.
+        } else {  // Se houver contatos na lista.
+            for (Contato contato : contatos) {  // Itera sobre a lista de contatos.
+                System.out.println(contato);  // Imprime as informações de cada contato.
+            }
+        }
+    }
+
+    @Override  // Indica que o método está substituindo um método da interface pai.
+    public void remover() {  // Define o método para remover contatos.
+        System.out.print("Nome do contato a ser removido: ");  // Solicita ao usuário o nome do contato a ser removido.
+        String nomeRemover = scanner.nextLine();  // Lê o nome do contato inserido pelo usuário.
+        contatos.removeIf(contato -> contato.getNome().equals(nomeRemover));  // Remove o contato da lista se seu nome corresponder ao nome fornecido pelo usuário.
+    }
+}
