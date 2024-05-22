@@ -15,7 +15,7 @@ public class Main {
             System.out.println("0 - Sair");
 
             opcao = leitor.nextInt();
-            leitor.nextLine(); // Consumir a nova linha
+            leitor.nextLine(); 
 
             switch (opcao) {
                 case 1:
